@@ -1,0 +1,8 @@
+#name : receive ... after Time -> Expr end
+# --
+receive
+    ${3:Pattern} ->
+        ${4:Expr}$0
+after ${1:Time} ->
+    ${2:Expr}
+end

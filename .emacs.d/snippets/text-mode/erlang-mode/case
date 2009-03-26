@@ -1,0 +1,6 @@
+#name : case Expr of Pattern1 when Guard1 -> Expr1 end
+# --
+case ${1:Expr} ->\n
+    ${2:Pattern1 when Guard1} ->\n
+        ${3:Expr1}$0
+end

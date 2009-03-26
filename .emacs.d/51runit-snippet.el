@@ -1,0 +1,50 @@
+;;; yasnippet for Test::Unit
+;;;
+;;; Shoji Nishimura (shoji_n@muc.biglobe.ne.jp)
+;;; 2008/06/24
+
+(defun ruby-runit-mode-p ()
+  (string-match "test_.*\\.rb$" (file-name-nondirectory (buffer-file-name))))
+
+(yas/define-snippets
+ 'ruby-mode
+ '(
+   ("template.runit" "require \"test/unit\"\nrequire \"${target}\"\n\nclass ${Target}TestCase < Test::Unit::TestCase\ndef setup\nend\n\ndef teardown\nend\n\n$0\nend" "testcase template" (ruby-runit-mode-p))
+   ("test" "def test_${method}\n$0\nend" "define test method" (ruby-runit-mode-p))
+   ("as" "assert" "assert" (ruby-runit-mode-p))
+   ("assert_block" "assert_block do\n$0\nend" "assert_block do ... end" (ruby-runit-mode-p))
+   ("asb" "assert_block do\n$0\nend" "assert_block do ... end" (ruby-runit-mode-p))
+   ("assert_equal" "assert_equal(${expected}, ${actual})" "assert_equal expected, actual" (ruby-runit-mode-p))
+   ("ase" "assert_equal(${expected}, ${actual})" "assert_equal expected, actual" (ruby-runit-mode-p))
+   ("assert_not_equal" "assert_not_equal(${expected}, ${actual})" "assert_not_equal expected, actual" (ruby-runit-mode-p))
+   ("asne" "assert_not_equal(${expected}, ${actual})" "assert_not_equal expected, actual" (ruby-runit-mode-p))
+   ("assert_in_delta" "assert_in_delta(${expetctd}, ${actual}, ${delta})" "assert_in_delta expected, actual, delta" (ruby-runit-mode-p))
+   ("asd" "assert_in_delta(${expetctd}, ${actual}, ${delta})" "assert_in_delta expected, actual, delta" (ruby-runit-mode-p))
+   ("assert_instance_of" "assert_instance_of(${klass}, ${object})" "assert_instance_of class, object" (ruby-runit-mode-p))
+   ("asi" "assert_instance_of(${klass}, ${object})" "assert_instance_of class, object" (ruby-runit-mode-p))
+   ("assert_match" "assert_match(${pattern}, ${string})" "assert_match pattern, string" (ruby-runit-mode-p))
+   ("asm" "assert_match(${pattern}, ${string})" "assert_match pattern, string" (ruby-runit-mode-p))
+   ("assert_not_match" "assert_not_match(${pattern}, ${string})" "assert_not_match pattern, string" (ruby-runit-mode-p))
+   ("asnm" "assert_not_match(${pattern}, ${string})" "assert_not_match pattern, string" (ruby-runit-mode-p))
+   ("assert_nil" "assert_nil(${object})" "assert_nil object" (ruby-runit-mode-p))
+   ("asn" "assert_nil(${object})" "assert_nil object" (ruby-runit-mode-p))
+   ("assert_not_nil" "assert_not_nil(${object})" "assert_not_nil object" (ruby-runit-mode-p))
+   ("asnn" "assert_not_nil(${object})" "assert_not_nil object" (ruby-runit-mode-p))
+   ("assert_kind_of" "assert_kind_of(${klass}, ${object})" "assert_kind_of class, object" (ruby-runit-mode-p))
+   ("ask" "assert_kind_of(${klass}, ${object})" "assert_kind_of class, object" (ruby-runit-mode-p))
+   ("assert_same" "assert_same(${expected}, ${actual})" "assert_same expected, actual" (ruby-runit-mode-p))
+   ("ass" "assert_same(${expected}, ${actual})" "assert_same expected, actual" (ruby-runit-mode-p))
+   ("assert_not_same" "assert_not_same(${expected}, ${actual})" "assert_not_same expected, actual" (ruby-runit-mode-p))
+   ("asns" "assert_not_same(${expected}, ${actual})" "assert_not_same expected, actual" (ruby-runit-mode-p))
+   ("assert_raise" "assert_raise(${exception}) {\n$0\n}" "assert_raise exceptation do ... end" (ruby-runit-mode-p))
+   ("asr" "assert_raise(${exception}) {\n$0\n}" "assert_raise excepction do ... end" (ruby-runit-mode-p))
+   ("assert_nothing_raised" "assert_nothing_raised(${exception}) {\n$0\n}" "assert_not_raise exception do ... end" (ruby-runit-mode-p))
+   ("asnr" "assert_nothing_raised(${exception}) {\n$0\n}" "assert_not_raised exception do ... end" (ruby-runit-mode-p))
+   ("assert_throws" "assert_throws(${symbol}) {\n$0\n}" "assert_throws symbol do ... end" (ruby-runit-mode-p))
+   ("ast" "assert_throws(${symbol}) {\n$0\n}" "assert_throws symbol do ... end" (ruby-runit-mode-p))
+   ("assert_nothing_thrown" "assert_nothing_thrown(${symbol}) {\n$0\n}" "assert_nothing_thrown symbol do ... end" (ruby-runit-mode-p))
+   ("asnt" "assert_nothing_thrown(${symbol}) {\n$0\n}" "assert_nothing_thrown symbol do ... end" (ruby-runit-mode-p))
+   ("flunk" "flunk(\"${message}\")" "flunk message" (ruby-runit-mode-p))
+   )
+ 'text-mode)
+

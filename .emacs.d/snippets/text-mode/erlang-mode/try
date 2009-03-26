@@ -1,0 +1,7 @@
+#name : try Expr catch ... end
+# --
+try ${1:Expr}
+catch
+    ${2:throw}:${3:Pattern when Guard} ->
+        ${4:Expr}$0
+end

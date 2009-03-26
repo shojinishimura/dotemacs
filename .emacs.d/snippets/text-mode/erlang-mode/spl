@@ -1,0 +1,3 @@
+#name : Pid = spawn_link(fun() -> ... end)
+# --
+${1:Pid} = spawn_link(fun() -> ${2:Expr} end)$0

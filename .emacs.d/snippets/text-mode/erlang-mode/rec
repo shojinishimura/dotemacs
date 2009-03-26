@@ -1,0 +1,3 @@
+#name : -record().
+# --
+-record(${1:Name}, {${2:key1 = Default1, ...}}.).

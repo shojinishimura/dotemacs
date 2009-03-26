@@ -1,0 +1,8 @@
+#name : try Expr of ... catch ... end
+# --
+try ${1:Expr} of
+    ${2:Pattern when Guard} ->
+        ${3:Expr}$0
+catch
+    
+end

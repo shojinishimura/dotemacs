@@ -1,0 +1,3 @@
+#name : fun() -> ... end
+# --
+fun(${X}) -> $0 end

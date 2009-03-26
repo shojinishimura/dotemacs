@@ -1,0 +1,5 @@
+** TODO %^{âΩ} Å© %^{íN}
+   DEADLINE: %^{Ç¢Ç¬Ç‹Ç≈}t
+   :LOGBOOK:
+   - Added: %U
+   :END:

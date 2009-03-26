@@ -1,0 +1,3 @@
+#name : process_flag(trap_exit, true)
+# --
+process_flag(${1:trap_exit}, ${2:true})$0

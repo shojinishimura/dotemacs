@@ -1,0 +1,8 @@
+#name : rpc()
+# --
+rpc(Pid, Request) ->
+    Pid ! {self(), Request},
+    receive
+        {Pid, Response} ->
+            Response
+    end.

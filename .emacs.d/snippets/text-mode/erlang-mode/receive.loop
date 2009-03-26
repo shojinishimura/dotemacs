@@ -1,0 +1,8 @@
+#name : loop() -> receive Pattern -> Expr end.
+# --
+loop() ->
+    receive
+        {From, ${Request}} ->
+            From ! {self(), ${Response}},
+	    loop()$0
+    end.

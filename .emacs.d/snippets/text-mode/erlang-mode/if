@@ -1,0 +1,6 @@
+#name : if Guard -> Expr end
+# --
+if
+    ${1:Guard} ->
+        ${2:Expr}$0
+end

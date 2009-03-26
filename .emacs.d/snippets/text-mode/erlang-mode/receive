@@ -1,0 +1,6 @@
+#name : receive ... end
+# --
+receive
+    ${1:Pattern} ->
+        ${2:Expr}$0
+end
