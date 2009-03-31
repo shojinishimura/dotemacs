@@ -1,9 +1,10 @@
 ;;;
 (setq process-coding-system-alist
       (cons '("gosh" utf-8 . utf-8) process-coding-system-alist))
-(setq scheme-program-name "gosh -i")
+(setq scheme-program-name "gosh -I . -i")
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
+
 
 (defun scheme-other-window ()
   "Run scheme on other window"
@@ -12,8 +13,24 @@
    (get-buffer-create "*scheme*"))
   (run-scheme scheme-program-name))
 
+(defun scheme-change-directory (dir)
+  "Change directory on scheme interpretor"
+  (interactive "DDirectory: ")
+  (comint-send-string (scheme-proc) "(use file.util)\n")
+  (comint-send-string (scheme-proc) (concat "(current-directory \"" (expand-file-name dir) "\")\n"))
+  )
+
 (define-key global-map
   "\C-cs" 'scheme-other-window)
+
+(defun my-scheme-mode-hook ()
+  (setq process-coding-system-alist
+	(cons '("gosh" utf-8 . utf-8) process-coding-system-alist))
+  (setq scheme-program-name "gosh -I. -i")
+  (define-key scheme-mode-map "\C-cd" 'scheme-change-directory))
+
+(add-hook 'scheme-mode-hook
+	  'my-scheme-mode-hook)
 
 (put 'and-let* 'scheme-indent-function 1)
 (put 'begin0 'scheme-indent-function 0)
