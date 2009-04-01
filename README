@@ -1,1 +1,15 @@
 My dot emacs files
+
+* how to setup
+  - install IPA fonts and BitStream Vera fonts.
+  - set EMACSDIR which refers the top directory of Emacs or Meadow.
+  - copy or link .emacs and .emacs.d/ to ~/.
+
+* ToDo
+  - to write setup script
+  - to refactor or improve .el files
+    - anything: 
+      - to merge the latest version of anything-config.el
+      - to switch anything-sources depends on a major mode
+    - auto-complete:
+      - to switch ac-sources depends on a major mode
