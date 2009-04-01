@@ -21,7 +21,8 @@
 ;(require 'migemo)
 (setq migemo-command "cmigemo")
 (setq migemo-options '("-q" "--emacs"))
-(setq migemo-dictionary "C:/meadow3/packages/etc/migemo/migemo-dict")
+(setq migemo-dictionary 
+      (concat (getenv "EMACSDIR") "/packages/etc/migemo/migemo-dict"))
 (setq migemo-user-dictionary nil)
 (setq migemo-regex-dictionary nil)
 (setq migemo-coding-system 'japanese-shift-jis-unix)
