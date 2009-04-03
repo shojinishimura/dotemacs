@@ -92,3 +92,20 @@
 (put 'with-signal-handlers 'scheme-indent-function 1)
 (put 'with-locking-mutex 'scheme-indent-function 1)
 (put 'guard 'scheme-indent-function 1)
+
+(eval-after-load "info-look"
+  '(info-lookup-add-help
+    :topic 'symbol
+    :mode  'scheme-mode
+    :regexp "[^()'\" \t\n]+"
+    :ignore-case nil
+    :doc-spec '(("(gauche-refe.info)Function and Syntax Index" nil
+		 "^[ \t]+-- [^:]+:[ \t]*" nil)
+		("(gauche-refe.info)Module Index" nil
+		 "^[ \t]+-- [^:]+:[ \t]*" nil)
+		("(gauche-refe.info)Class Index" nil
+		 "^[ \t]+-- [^:]+:[ \t]*" nil)
+		("(gauche-refe.info)Variable Index" nil
+		 "^[ \t]+-- [^:]+:[ \t]*" nil))
+    :parse-rule  nil
+    :other-modes nil))
