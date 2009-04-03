@@ -67,16 +67,34 @@
 	  (delete "" (split-string (shell-command-to-string
 				  (format "gosh -b -e'(letrec ((car-of-car (lambda (x) (if (pair? x) (car-of-car (car x)) x)))) (with-input-from-file \"%s\" (lambda () (let loop((sexp (read))) (if (eof-object? sexp) #f (begin (cond ((not (pair? sexp)) #f) ((or (eq? (quote define) (car sexp)) (eq? (quote define-syntax) (car sexp)) (eq? (quote define-macro) (car sexp)) (eq? (quote define-class) (car sexp))) (print (car-of-car (cadr sexp))))) (loop (read))))))))'" (buffer-file-name))) "\n")))))
 
+(defun ac-imenu-scheme-candidate ()
+  (mapcar (lambda (x)
+	    (or (and (string-match "()$" x) (substring x 0 -2))
+		x))
+	  (ac-imenu-candidate)))
+
+(defvar ac-source-scheme-symbols
+  '((init . (lambda ()
+	      (require 'imenu)
+	      (setq ac-imenu-index
+		    (ignore-errors (imenu--make-index-alist)))))
+    (candidates . ac-imenu-scheme-candidate))
+  "Source for scheme symbols.")
+
+
+
 (add-hook 'scheme-mode-hook
 	  '(lambda ()
 	     (make-local-variable 'ac-sources)
 	     (make-local-variable 'ac-source-gauche-file-symbols-cache)
 	     (make-local-variable 'after-save-hook)
-	     (add-to-list 'ac-sources 'ac-source-r5rs)
+	     (setq ac-sources '(ac-source-scheme-symbols ac-source-r5rs ac-source-words-in-buffer))
+;	     (add-to-list 'ac-sources 'ac-source-r5rs)
 ;	     (add-to-list 'ac-sources 'ac-source-gauche-file-symbols)
 ;	     (add-hook 'after-save-hook
 ;		       'ac-source-gauche-collect-file-symbols)
 ;	     (ac-source-gauche-collect-file-symbols)
 	     ))
+
 
 (provide 'auto-complete-scheme)
