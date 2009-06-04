@@ -1,6 +1,6 @@
 User emacs-lisp files
 
-Shoji Nishimura(s-nishimura@bk.jp.nec.com)
+Shoji Nishimura
 
 ‰ü‘¢€–Ú
 
