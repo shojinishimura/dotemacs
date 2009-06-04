@@ -1,5 +1,5 @@
 ;;; anything-gtags.el --- GNU GLOBAL anything.el interface
-;; $Id: anything-gtags.el,v 1.10 2008/08/24 20:45:07 rubikitch Exp $
+;; $Id: anything-gtags.el,v 1.18 2009/04/01 14:59:27 rubikitch Exp $
 
 ;; Copyright (C) 2008  rubikitch
 
@@ -28,9 +28,54 @@
 ;; * `anything-c-source-gtags-select' is a source for `gtags-find-tag'.
 ;; * Replace *GTAGS SELECT* buffer with `anything' interface.
 
+;;; Commands:
+;;
+;; Below are complete command list:
+;;
+;;  `anything-gtags-select'
+;;    Tag jump using gtags and `anything'.
+;;
+;;; Customizable Options:
+;;
+;; Below are customizable option list:
+;;
+;;  `anything-gtags-enable-initial-pattern'
+;;    *If non-nil, initial input of `anything-gtags-select' is current symbol.
+;;    default = nil
+;;  `anything-gtags-classify'
+;;    *If non-nil, use separate source file by file.
+;;    default = nil
+
 ;;; History:
 
 ;; $Log: anything-gtags.el,v $
+;; Revision 1.18  2009/04/01 14:59:27  rubikitch
+;; Disable no-filename display (`anything-gtags-classify' == t) because `aggs-select-it' needs file-name.
+;;
+;; Revision 1.17  2009/03/18 17:50:08  rubikitch
+;; If `anything-gtags-classify' is t, enable classification and suppress filename output.
+;; If it is other true symbol, enable classification and output filename.
+;;
+;; Revision 1.16  2009/03/18 17:35:01  rubikitch
+;; refactoring
+;;
+;; Revision 1.15  2009/03/18 17:31:39  rubikitch
+;; Apply SUGAWARA's patch to suppress filename output when `anything-gtags-classify' is non-nil.
+;;
+;; Revision 1.14  2009/01/27 09:51:34  rubikitch
+;; * Push context when jumping with `anything-gtags-select'.
+;; * New variable: `anything-gtags-enable-initial-pattern'.
+;;
+;; Revision 1.13  2008/12/20 22:11:04  rubikitch
+;; Fixed an error in Emacs23 by Andy Stewart. Thanks.
+;;
+;; Revision 1.12  2008/10/24 07:14:14  rubikitch
+;; use `ad-get-arg'
+;;
+;; Revision 1.11  2008/09/06 06:01:07  rubikitch
+;; Classify candidates by file name using meta source.
+;; If `anything-gtags-classify' is non-nil, classification is enabled.
+;;
 ;; Revision 1.10  2008/08/24 20:45:07  rubikitch
 ;; silence byte compiler
 ;;
@@ -68,6 +113,15 @@
 (require 'anything)
 (require 'gtags)
 
+(defgroup anything-gtags nil
+  "Gtags Anything interface"
+  :group 'anything)
+
+(defcustom anything-gtags-enable-initial-pattern nil
+  "*If non-nil, initial input of `anything-gtags-select' is current symbol."
+  :group 'anything-gtags
+  :type 'boolean)
+
 (defvar anything-c-source-gtags-select
   '((name . "GTAGS")
     (init
@@ -77,20 +131,48 @@
     (candidates-in-buffer)
     (action
      ("Goto the location" . (lambda (candidate)
+                              (gtags-push-context)
                               (gtags-goto-tag candidate ""))))))
 ;; (setq anything-sources (list anything-c-source-gtags-select))
 
 (defun anything-gtags-select ()
   "Tag jump using gtags and `anything'."
   (interactive)
-  (anything '(anything-c-source-gtags-select) nil "Find Tag: "))
+  (let* ((initial-pattern (regexp-quote (or (thing-at-point 'symbol) ""))))
+    (anything '(anything-c-source-gtags-select)
+              (if anything-gtags-enable-initial-pattern initial-pattern)
+              "Find Tag: " nil)))
 
 ;;;; `gtags-select-mode' replacement
 (defvar anything-gtags-hijack-gtags-select-mode t
-    "Use `anything' instead of `gtags-select-mode'.")
+  "Use `anything' instead of `gtags-select-mode'.")
+(defcustom anything-gtags-classify nil
+  "*If non-nil, use separate source file by file.
+If it is t, enable classification and suppress file name output in candidates.
+If it is other symbol, display file name in candidates even if classification is enabled."
+  :group 'anything-gtags
+  :type '(choice boolean symbol))
+(defvar aggs-base-source
+  '((candidates-in-buffer)
+    (get-line . aggs-candidate-display)
+    (display-to-real
+     . (lambda (c) (if (string-match "^ " c) (concat "_ " c) c)))
+    (action
+     ("Goto the location"
+      . (lambda (c) (aggs-select-it c t))))
+    (persistent-action . aggs-select-it)
+    (cleanup . (lambda () (kill-buffer buffer)))))
+
 (defun aggs-candidate-display (s e)
   ;; 16 = length of symbol
   (buffer-substring-no-properties (+ s 16) e))
+(defun aggs-set-anything-current-position ()
+  ;; It's needed because `anything' saves
+  ;; *GTAGS SELECT* buffer's position,
+  (save-window-excursion
+    (switch-to-buffer save)
+    (setq anything-current-position (cons (point) (window-start)))))
+
 (defun ag-hijack-gtags-select-mode ()
   ;; `save': C source file / `buffer': gtags-select-mode buffer
   ;; They are defined at `gtags-goto-tag'.
@@ -102,27 +184,55 @@
          (lineno (with-current-buffer save
                    (save-restriction
                      (widen)
-                     (line-number-at-pos)))))
+                     (line-number-at-pos))))
+         (sources (if anything-gtags-classify
+                      '(((name . "GTAGS SELECT meta source")
+                         (init . aggs-meta-source-init)))
+                    `(((name . "GTAGS SELECT")
+                       (init
+                        . (lambda ()
+                            (aggs-set-anything-current-position)
+                            (anything-candidate-buffer buffer)))
+                       ,@aggs-base-source)))))
     (anything
-     '(((name . "GTAGS SELECT")
-        (init
-         . (lambda ()
-             ;; It's needed because `anything' saves
-             ;; *GTAGS SELECT* buffer's position,
-             (save-window-excursion
-               (switch-to-buffer save)
-               (setq anything-current-position (cons (point) (window-start))))
-             (anything-candidate-buffer buffer)))
-        (candidates-in-buffer)
-        (get-line . aggs-candidate-display)
-        (display-to-real
-         . (lambda (c) (if (string-match "^ " c) (concat "_ " c) c)))
-        (action
-         ("Goto the location"
-          . (lambda (c) (aggs-select-it c t))))
-        (persistent-action . aggs-select-it)
-        (cleanup . (lambda () (kill-buffer buffer)))))
+     sources
      nil nil nil (format "\\(\\(%d\\) +%s\\)" lineno (regexp-quote basename) ))))
+
+(defun aggs-candidate-buffer-by-filename (filename)
+  (get-buffer-create (concat "*anything gtags*" filename)))
+(defun aggs-meta-source-init ()
+  (aggs-set-anything-current-position)
+  (with-current-buffer buffer
+    (goto-char (point-min))
+    (let (files prev-filename)
+      (loop 
+       while (re-search-forward " [0-9]+ \\([^ ]+\\) " (point-at-eol) t)
+       for filename = (match-string 1)
+       for bol = (point-at-bol)
+       for eol = (point-at-eol)
+       do
+       (with-current-buffer (aggs-candidate-buffer-by-filename filename)
+         (unless (equal prev-filename filename)
+           (setq files (cons filename files))
+           (erase-buffer))
+         (save-excursion (insert-buffer-substring buffer bol eol))
+         ;; [2009/04/01] disabled. because aggs-select-it needs filename.
+;;          (when (eq anything-gtags-classify t)
+;;            (while (search-forward filename nil t)
+;;             (delete-region (match-beginning 0) (match-end 0))))
+         (goto-char (point-max))
+	 (insert "\n"))
+       (forward-line 1)
+       (setq prev-filename filename))
+      (anything-set-sources
+       (loop for file in (nreverse files) collect
+             (append `((name . ,file)
+                       (init . (lambda ()
+                                 (anything-candidate-buffer
+                                  ,(aggs-candidate-buffer-by-filename file)))))
+                     aggs-base-source)))
+      (anything-funcall-foreach 'init))))
+           
 
 (defun aggs-select-it (candidate &optional delete)
   (with-temp-buffer
@@ -140,7 +250,9 @@
   "Use `anything' instead of `gtags-select-mode' when `anything-gtags-hijack-gtags-select-mode' is non-nil."
   (unless (and anything-gtags-hijack-gtags-select-mode
            (string-match "*GTAGS SELECT*"
-                         (if (bufferp buffer) (buffer-name buffer) buffer)))
+                         (if (bufferp (ad-get-arg 0))
+                             (buffer-name (ad-get-arg 0))
+                               (or (ad-get-arg 0) ""))))
     ad-do-it))
 ;; (progn (ad-disable-advice 'switch-to-buffer 'around 'anything-gtags) (ad-update 'switch-to-buffer)) 
 

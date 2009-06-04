@@ -14,6 +14,8 @@
 (require 'anything-imenu)
 (require 'anything-bm)
 
+(require 'anything-gtags)
+(require 'anything-etags)
 (require 'anything-c-yasnippet)
 ;(require 'anything-dabbrev-expand)
 
