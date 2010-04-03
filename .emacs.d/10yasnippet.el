@@ -18,6 +18,19 @@
 
 (defvar flymake-is-active-flag nil)
 
+(setq yas/expand-prev-status nil)
+(defadvice yas/expand (around yas/expand-suppress-when-canceled activate)
+  "suppress yas/expand invocation after canceled."
+  (if (eq yas/expand-prev-status 'interrupted)
+      (progn (insert yas/trigger-key) (setq yas/expand-prev-status nil))
+    (progn (setq yas/expand-prev-status ad-do-it)
+	   (message yas/expand-prev-status))))
+
+(defadvice yas/undo-expand-snippet
+  (after yas/undo-expand-snippet-mark-status activate)
+  "mark status when yas/undo-expand-snippet is called."
+  (setq yas/expand-prev-status 'interrupted))
+
 (defun yas/indent-snippet ()
   (indent-region yas/snippet-beg yas/snippet-end)
   (indent-according-to-mode))

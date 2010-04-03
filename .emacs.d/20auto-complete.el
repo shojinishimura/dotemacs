@@ -17,5 +17,5 @@
 (add-to-list 'ac-modes 'scheme-mode)
 
 ;; initialization for each mode
-(ac-ruby-init)
+;(ac-ruby-init)
 (ac-emacs-lisp-init)

@@ -37,6 +37,7 @@
 
 (require 'moccur-edit)
 
+(require 'cygwin-mount)
 ;; bm
 (require 'bm)
 (global-set-key [?\C-\M- ] 'bm-toggle)
@@ -77,6 +78,9 @@
                (line (flymake-ler-line (nth (1- count) line-err-info-list))))
           (message "[%s] %s" line text)))
       (setq count (1- count)))))
+
+;; brackets
+(require 'brackets)
 
 ;;; Indent
 (defun indent-current-buffer ()

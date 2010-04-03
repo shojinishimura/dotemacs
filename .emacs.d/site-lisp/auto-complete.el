@@ -852,7 +852,7 @@ use SOURCES as `ac-sources'.")
                  (> (length cand) ac-limit))
             (setcdr (nthcdr (1- ac-limit) (copy-sequence cand)) nil))
         (setq candidates (append candidates cand))))
-    (delete-dups candidates)))
+    (sort (delete-dups candidates) #'string<)))
 
 (defun ac-get-source-property (property source)
   (if (symbolp source)

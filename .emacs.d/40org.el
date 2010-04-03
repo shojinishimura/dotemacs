@@ -22,8 +22,13 @@
   (interactive)
   (find-file "~/org/notes.org"))
 
+(defun open-diary()
+  (interactive)
+  (find-file "~/org/diary.org"))
+
 (define-key global-map "\C-cr" 'org-remember)
 (define-key global-map "\C-cm" 'notes)
+(define-key global-map "\C-cd" 'open-diary)
 
 (custom-set-variables
  '(org-agenda-files '("~/org/gtd.org"))
@@ -54,6 +59,7 @@
  '(org-remember-templates
    '(("Todo" ?t "%[~/.emacs.d/templates/org-todo.txt]" "~/org/gtd.org" "Inbox")
      ("Memo" ?m "* %^{Title} %U %^g\n%?" "~/org/notes.org" 'top)
+     ("Diary" ?d "* %u :DIARY:\n%?" "~/org/diary.org" 'top)
      ("Clipboard" ?c "* %^{Title} %U %^g\n%c\n%?" "~/org/notes.org" 'top)
      ("Appt" ?a "%[~/.emacs.d/templates/org-appt.txt]" "~/org/gtd.org" "Calendar")
      ("Borrow" ?b "%[~/.emacs.d/templates/org-borrow.txt]" "~/org/gtd.org" "Borrowed")
@@ -81,4 +87,29 @@
 (add-hook 'org-blocker-hook 'my-org-blocker-hook)
 
 
-  
+;; for latex
+(setq temporary-file-directory "C:/temp")
+(setq org-export-latex-coding-system 'sjis-dos)
+(setq org-export-latex-date-format "%m/%d/%Y")
+
+(add-hook 'org-mode-hook
+	  '(lambda ()
+	     (add-to-list 'org-export-latex-classes
+	     '("jarticle"
+	       "\\documentclass[a4j]{jarticle}
+\\usepackage{graphicx}
+\\usepackage{longtable}
+\\usepackage{wrapfig}
+\\usepackage{soul}
+\\usepackage{amssymb}
+\\usepackage[dvipdfm,bookmarkstype=toc=true,colorlinks=true,urlcolor=black,%
+linkcolor=black,citecolor=black,linktocpage=true,bookmarks=false]{hyperref}"
+	       ("\\section{%s}" . "\\section*{%s}")
+	       ("\\subsection{%s}" . "\\subsection*{%s}")
+	       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+	       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+	       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")
+	       ))))
+
+
+	       

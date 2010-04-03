@@ -9,7 +9,9 @@
 (yas/define-snippets
  'ruby-mode
  '(
-   ("template.runit" "require \"test/unit\"\nrequire \"${target}\"\n\nclass ${Target}TestCase < Test::Unit::TestCase\ndef setup\nend\n\ndef teardown\nend\n\n$0\nend" "testcase template" (ruby-runit-mode-p))
+   ("template.runit" "require \"test/unit\"\nrequire \"${target}\"\n\nclass Test${Target} < Test::Unit::TestCase\n\n$0\nend" "testcase template" (ruby-runit-mode-p))
+   ("setup" "def setup\n$0\nend" "def setup" (ruby-runit-mode-p))
+   ("teardown" "def teardown\n$0\nend" "def teardown" (ruby-runit-mode-p))
    ("test" "def test_${method}\n$0\nend" "define test method" (ruby-runit-mode-p))
    ("as" "assert" "assert" (ruby-runit-mode-p))
    ("assert_block" "assert_block do\n$0\nend" "assert_block do ... end" (ruby-runit-mode-p))

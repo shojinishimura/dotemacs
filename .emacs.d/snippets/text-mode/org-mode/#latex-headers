@@ -1,0 +1,4 @@
+#+LATEX_CLASS: article
+#+AUTHOR: Shoji Nishimura
+#+TITLE: Report
+#+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
